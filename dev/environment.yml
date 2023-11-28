@@ -1,0 +1,18 @@
+# `conda env create -f environment.yml` (initial create); `conda env update --name cs50 -f environment.yml` (if updated)
+name: cs50
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - bokeh
+  - ipykernel
+  - matplotlib 
+  - numpy
+  - pandas
+  - pip
+  - PuLP
+  - pyarrow
+  - scikit-learn
+  - scipy
+  - seaborn

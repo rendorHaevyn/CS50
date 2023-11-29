@@ -4,13 +4,14 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.11
+  - python=3.10
   - bokeh
   - conda-forge::gh
   - ipykernel
   - matplotlib 
   - numpy
   - pandas
+  - pillow
   - pip
   - PuLP
   - pyarrow

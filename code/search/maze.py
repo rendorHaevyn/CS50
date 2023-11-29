@@ -25,11 +25,11 @@ class StackFrontier(object):
             raise ValueError('empty frontier')
         return self.frontier.pop()  # end of list
 
-class QueueFrontier(StackFontier):
+class QueueFrontier(StackFrontier):
     """ FIFO data structure - breadth-first search """
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
     
     def remove(self):
         if self.empty():
@@ -39,7 +39,8 @@ class QueueFrontier(StackFontier):
 class Maze(object):
     """ Take sequence and work out how to solve """
 
-    def __init__(self, filename):
+    def __init__(self, filename, ftype):
+        self.ftype = ftype
         
         with open(filename, mode='r') as f:
             contents = f.read()
@@ -71,8 +72,8 @@ class Maze(object):
                     else:
                         row.append(True)
                 except IndexError:
-                    # row.append(False)
-                    raise Exception('how did you get here?')
+                    row.append(False)
+                    # raise Exception('how did you get here?')
             self.walls.append(row)
         
             self.solution = None
@@ -119,7 +120,11 @@ class Maze(object):
 
         # Initialize frontier to just the starting position
         start = Node(state=self.start, parent=None, action=None)
-        frontier = StackFrontier()
+
+        if self.ftype.lower() == 'stack':
+            frontier = StackFrontier()
+        else:
+            frontier = QueueFrontier()
         frontier.add(start)
 
         # Initialize an empty explored set
@@ -147,7 +152,8 @@ class Maze(object):
                 actions.reverse()
                 cells.reverse()
                 self.solution = (actions, cells)
-                return
+
+                return None
 
             # Mark node as explored
             self.explored.add(node.state)
@@ -209,16 +215,24 @@ class Maze(object):
 
         img.save(filename)
 
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        sys.exit("Usage: python maze.py maze.txt <<Stack | Queue>>")
 
-if len(sys.argv) != 2:
-    sys.exit("Usage: python maze.py maze.txt")
+    fnm = sys.argv[1]
+    ftype = sys.argv[2]
 
-m = Maze(sys.argv[1])
-print("Maze:")
-m.print()
-print("Solving...")
-m.solve()
-print("States Explored:", m.num_explored)
-print("Solution:")
-m.print()
-m.output_image("maze.png", show_explored=True)
+    m = Maze(fnm, ftype)
+    print("Maze:")
+    m.print()
+    print("Solving...")
+    m.solve()
+    print("States Explored:", m.num_explored)
+    print("Solution:")
+    m.print()
+    import os
+    path_out = 'outputs'
+    os.makedirs(path_out, exist_ok=True)
+    file_out = fnm.split('/')[-1].split('.')[0]
+
+    m.output_image(os.path.join(path_out,f"{file_out}_{ftype}.png"), show_explored=True)
